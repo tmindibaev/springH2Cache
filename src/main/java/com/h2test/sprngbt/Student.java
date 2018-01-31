@@ -1,5 +1,8 @@
 package com.h2test.sprngbt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
     private Long id;
     private String name;
@@ -9,14 +12,16 @@ public class Student {
         super();
     }
 
-    // можно ли так поступить?
-    // для метода put в кэше с базой
     public Student(Student student) {
         this.id = student.id;
         this.name = student.name;
         this.passportNumber = student.passportNumber;
     }
 
+    public Student (Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     public Student(Long id, String name, String passportNumber) {
         super();
         this.id = id;

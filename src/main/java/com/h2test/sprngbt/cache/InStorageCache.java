@@ -1,12 +1,13 @@
 package com.h2test.sprngbt.cache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InStorageCache<K, V >
         implements Cache<K, V> {

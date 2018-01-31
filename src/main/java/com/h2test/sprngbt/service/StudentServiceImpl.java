@@ -1,68 +1,68 @@
-package com.h2test.sprngbt;
+package com.h2test.sprngbt.service;
 
+import com.h2test.sprngbt.CacheConfig;
+import com.h2test.sprngbt.Student;
 import com.h2test.sprngbt.cache.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.h2test.sprngbt.cache.CacheBuilder;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
-public class StudentJdbcRepository<K, V>
-        implements Cache<K, V> {
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+@Service
+public class StudentServiceImpl implements StudentService{
 
-    private final ConcurrentHashMap<K, String> map;
-    private final static int MAX_INMEMORY_SIZE = 100;
+    private final JdbcTemplate jdbcTemplate;
 
-    public StudentJdbcRepository() {
-        this.map = new ConcurrentHashMap<K, String>();
+    private Cache<Long, String> cache;
+
+    public StudentServiceImpl(JdbcTemplate jdbcTemplate,
+                              CacheConfig cacheConfig) {
+         cache = new CacheBuilder()
+                .setMaxInMemorySize(cacheConfig.getInmemory().getSize())
+                .setMaxInStorageSize(cacheConfig.getInstorage().getSize())
+                 .setPathToFile(cacheConfig.getInstorage().getDir())
+                .build();
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
-    public V get(K key) {
+    public void put(Student student) {
+        cache.put(student.getId(), student.getName());
+        jdbcTemplate.update("INSERT INTO student (id, name, passport_number) " + "VALUES(?,  ?, ?)",
+                new Object[]{student.getId(), student.getName(), student.getPassportNumber()});
+    }
+    public Student get(Long key) {
         Student value;
-        if (contains(key)) {
+        if (cache.contains(key)) {
             value = jdbcTemplate.queryForObject("SELECT * FROM student WHERE id=?", new Object[]{key},
                     new BeanPropertyRowMapper<>(Student.class));
-            return (V) value;
+            return value;
         }
         return null;
     }
-
+    /*
     @Override
     public boolean contains(Object key) {
         return map.containsKey(key);
     }
-
+    /*
     @Override
-    public void put(K key, V value) {
-        Student student = new Student((Student) value); // явное приведение???
 
-        map.put(key, student.getName());
-        jdbcTemplate.update("INSERT INTO student (id, name, passport_number) " + "VALUES(?,  ?, ?)",
-                new Object[]{student.getId(), student.getName(), student.getPassportNumber()});
     }
-    //public int insert(Student student) {
 
     public int update(Student student) {
         return jdbcTemplate.update("UPDATE student " + " SET name = ?, passport_number = ? " + " WHERE id = ?",
                 new Object[]{student.getName(), student.getPassportNumber(), student.getId()});
     }
 
-
     @Override
     public void putIfAbsent(Object key, Object value) {
-
+List<Student> findAll()
     }
-
 
     @Override
     public void remove(K key) {
@@ -84,9 +84,7 @@ public class StudentJdbcRepository<K, V>
         return 0;
     }
 
-    public List<Student> findAll() {
-        return jdbcTemplate.query("select * from student", new StudentRowMapper());
-    }
+
     /*public Student findById(long id) {
         return jdbcTemplate.queryForObject("select * from student where id=?", new Object[] { id },
                 new BeanPropertyRowMapper<Student>(Student.class));
@@ -101,4 +99,11 @@ public class StudentJdbcRepository<K, V>
             return student;
         }
     }
+
+    public List<Student> findAll() {
+        validateScheme();
+        return jdbcTemplate.query("select * from student", new StudentRowMapper());
+    }
+
+    private void validateScheme(){};
 }
