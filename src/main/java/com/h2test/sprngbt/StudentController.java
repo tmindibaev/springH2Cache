@@ -4,11 +4,7 @@ import com.h2test.sprngbt.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLException;
-
 
 @RestController
 @RequestMapping("/user")
@@ -18,29 +14,18 @@ public class StudentController {
     @Autowired
     StudentService validateScheme;
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Order")  // 404
-    public class OrderNotFoundException extends RuntimeException {
-        public OrderNotFoundException(String userId) {
-        }
-    }
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Server error") //500
-    public class InternalServerErrorException extends RuntimeException {
-        public InternalServerErrorException() {
-        }
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public Student getUser(@RequestParam(value = "userId") Long userId) {
-        if (userId == null) throw new OrderNotFoundException("empty user");
-
+        if (userId == null) {
+            logger.info("error 1 -> {}");
+        }
         Student student = validateScheme.get(userId);
-        if (student == null) throw new OrderNotFoundException(userId.toString());
+
         return student;
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public void updateUser(@RequestParam(value = "userId") Long userId,
                            @RequestParam(value = "userName") String userName,
                            @RequestParam(value = "passportNumber") String passportNumber) {
@@ -51,7 +36,7 @@ public class StudentController {
         //validateScheme.update(student);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT, produces = "application/json")
     public void insertUser(@RequestParam(value = "userId") Long userId,
                            @RequestParam(value = "userName") String userName,
                            @RequestParam(value = "passportNumber") String passportNumber) {

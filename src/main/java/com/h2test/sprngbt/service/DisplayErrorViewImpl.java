@@ -1,14 +1,30 @@
 package com.h2test.sprngbt.service;
 
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+
 public class DisplayErrorViewImpl implements DisplayErrorView {
+    private HttpStatus status;
     private String userId;
-    private String errorCode;
+    private ErrorCode errorCode;
     private String errorDescription;
 
-    public DisplayErrorViewImpl(String userId, String errorCode, String errorDescription) {
+    public DisplayErrorViewImpl(HttpStatus status, String userId, ErrorCode errorCode, String errorDescription) {
+        this.status = status;
         this.userId = userId;
         this.errorCode = errorCode;
         this.errorDescription = errorDescription;
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return status;
+    }
+
+    @Override
+
+    public void setHttpStatus(HttpStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -22,12 +38,12 @@ public class DisplayErrorViewImpl implements DisplayErrorView {
     }
 
     @Override
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 
     @Override
-    public String getErrorCode() {
+    public ErrorCode getErrorCode() {
         return errorCode;
     }
 
