@@ -4,10 +4,16 @@ import com.h2test.sprngbt.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/user")
+@Validated
 public class StudentController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -15,10 +21,9 @@ public class StudentController {
     StudentService validateScheme;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public Student getUser(@RequestParam(value = "userId") Long userId) {
-        if (userId == null) {
-            logger.info("error 1 -> {}");
-        }
+    public Student getUser( @RequestParam(value = "userId") @Valid @NotNull  Long userId) {
+
+        logger.info("user id  -> {}", userId);
         Student student = validateScheme.get(userId);
 
         return student;

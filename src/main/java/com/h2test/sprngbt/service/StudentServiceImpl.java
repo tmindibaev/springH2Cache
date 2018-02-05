@@ -4,6 +4,7 @@ import com.h2test.sprngbt.CacheConfig;
 import com.h2test.sprngbt.Student;
 import com.h2test.sprngbt.cache.Cache;
 import com.h2test.sprngbt.cache.CacheBuilder;
+import com.h2test.sprngbt.exceptions.NoSuchUserException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -42,7 +43,9 @@ public class StudentServiceImpl implements StudentService{
                     new BeanPropertyRowMapper<>(Student.class));
             return value;
         }
-        return null;
+        else {
+            throw new NoSuchUserException(key);
+        }
     }
     /*
     @Override

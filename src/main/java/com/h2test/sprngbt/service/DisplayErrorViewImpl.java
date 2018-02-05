@@ -1,10 +1,12 @@
 package com.h2test.sprngbt.service;
 
-import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.http.HttpStatus;
 
 public class DisplayErrorViewImpl implements DisplayErrorView {
     private HttpStatus status;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING)
     private String userId;
     private ErrorCode errorCode;
     private String errorDescription;
@@ -14,6 +16,20 @@ public class DisplayErrorViewImpl implements DisplayErrorView {
         this.userId = userId;
         this.errorCode = errorCode;
         this.errorDescription = errorDescription;
+    }
+
+    public DisplayErrorViewImpl(HttpStatus status,
+                                ErrorCode errorCode,
+                                String errorDescription) {
+        this.status = status;
+        this.errorCode = errorCode;
+        this.errorDescription = errorDescription;
+    }
+    public DisplayErrorViewImpl(HttpStatus status, ErrorCode errorCode,
+                                String errorDescription, Throwable ex) {
+        this.status = status;
+        this.errorCode = errorCode;
+        this.errorDescription = ex.getLocalizedMessage();
     }
 
     @Override
