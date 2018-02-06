@@ -67,10 +67,11 @@ public class GlobalCustomExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler({NoSuchUserException.class})
-    public ResponseEntity<Object> handleNoSuchUserException() {
-        logger.info("messageHandler: NoSuchUserException");
+    public ResponseEntity<Object> handleNoSuchUserException(NoSuchUserException ex, WebRequest request) {
+        //logger.info("messageHandler: NoSuchUserException ->{}", ex.getMessage());
+
         DisplayErrorViewImpl errorView =
-                new DisplayErrorViewImpl(HttpStatus.NOT_FOUND, "", ErrorCode.NO_SUCH_USER, "userId not found");// ex.getLocalizedMessage());
+                new DisplayErrorViewImpl(HttpStatus.NOT_FOUND, ex.getMessage(), ErrorCode.NO_SUCH_USER, "userId not found");// ex.getLocalizedMessage());
         return new ResponseEntity<Object>(errorView, new HttpHeaders(), errorView.getHttpStatus());
     }
 

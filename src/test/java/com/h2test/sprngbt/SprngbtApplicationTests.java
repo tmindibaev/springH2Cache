@@ -26,12 +26,12 @@ public class SprngbtApplicationTests {
     @Autowired
     private StudentController controller;
     @Test
-    public void testGetStatusOk() throws Exception {
+    public void testGetStatusNotFound() throws Exception {
         String userId = "10001";
 
         this.mockMvc.perform(get("/user").param("userId", userId))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -78,6 +78,6 @@ public class SprngbtApplicationTests {
 
         this.mockMvc.perform(get("/user").param("userId", userId))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }

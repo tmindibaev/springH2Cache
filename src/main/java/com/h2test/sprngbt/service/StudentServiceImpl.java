@@ -44,7 +44,7 @@ public class StudentServiceImpl implements StudentService{
             return value;
         }
         else {
-            throw new NoSuchUserException(key);
+            throw new NoSuchUserException(key.toString());
         }
     }
     /*
